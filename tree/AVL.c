@@ -27,16 +27,14 @@ typedef struct AvlNode
 
 static int Height(AvlTree T)
 {
-	if (T == NULL)
-		return 0;
-	return T->Height;
+    if (T == NULL)
+        return -1;
+    return T->Height;
 }
 
 inline int Max(int left, int right) {
 	return left > right ? left : right;
 }
-
-//inline 
 
 AvlTree Insert(char c, AvlTree T) {
 	if (T == NULL) {
@@ -51,7 +49,7 @@ AvlTree Insert(char c, AvlTree T) {
 		}
 	}
 	else if (T->Element > c) {
-		Insert(c, T->Left);
+		T->Left = Insert(c, T->Left);
 		if (Height(T->Left) - Height(T->Right) >= 2)     
 			if (c < T->Left->Element)
 				T = SingleRotateWithLeft(T);
@@ -59,7 +57,7 @@ AvlTree Insert(char c, AvlTree T) {
 				T = DoubleRotateWithLeft(T);
 	}
 	else if (T->Element < c) {
-		Insert(c, T->Right);
+		T->Right = Insert(c, T->Right);
 		if (Height(T->Right) - Height(T->Left) >= 2)
 			if (c > T->Right->Element)
 				T = SingleRotateWithRight(T);
@@ -71,7 +69,7 @@ AvlTree Insert(char c, AvlTree T) {
 	return T;
 }
 
-AvlTree Delete(Element c, AvlTree T) {
+AvlTree Delete(char c, AvlTree T) {
 	if (c < T->Element) {
 		Delete(c, T->Left);
 		if (Height(T->Right) - Height(T->Left) >= 2) {
@@ -80,7 +78,7 @@ AvlTree Delete(Element c, AvlTree T) {
 		}
 	}
 	else if (c > T->Element) {
-		Delete(c, T-Right);
+		Delete(c, T->Right);
 		if (Height(T->Right) - Height(T->Left) >= 2) {
 
 			T->Height = Max(Height(T->Left), Height(T->Right)) - 1;
@@ -94,7 +92,7 @@ AvlTree Delete(Element c, AvlTree T) {
 }
 //left-left : 单次旋转即可恢复平衡
 AvlTree SingleRotateWithLeft(AvlTree T) {
-	AvlNode head = T->Left;
+	Position head = T->Left;
 	T->Left = head->Right;
 	head->Right = T;
 	
@@ -105,10 +103,10 @@ AvlTree SingleRotateWithLeft(AvlTree T) {
 }
 //left-right : 双旋转才能恢复平衡(书上用两次单旋转就解决了，可以看看)	
 AvlTree DoubleRotateWithLeft(AvlTree T) {
-	AvlNode head = T->Left->Right;
-	AvlNode left = T->Left;
+	Position head = T->Left->Right;
+	Position left = T->Left;
 	left->Right = head->Left;
-	T->Left = head->right;
+	T->Left = head->Right;
 	head->Left = left;
 	head->Right = T;
 
@@ -119,7 +117,7 @@ AvlTree DoubleRotateWithLeft(AvlTree T) {
 }
 
 AvlTree SingleRotateWithRight(AvlTree T) {
-	AvlNode head = T->Right;
+	Position head = T->Right;
 	T->Right = head->Left;
 	head->Left = T;
 
@@ -129,8 +127,8 @@ AvlTree SingleRotateWithRight(AvlTree T) {
 }
 
 AvlTree DoubleRotateWithRight(AvlTree T) {
-	AvlNode head = T->Right->Left;
-	AvlNode right = T->Left->Right;
+	Position head = T->Right->Left;
+	Position right = T->Left->Right;
 	
 	right->Left = head->Right;
 	T->Right = head->Left;
@@ -144,12 +142,20 @@ AvlTree DoubleRotateWithRight(AvlTree T) {
 }
 
 void PrintTree(AvlTree T) {
-	int h = T->Height;
-
+    if (T == NULL)
+        return ;
+    PrintTree(T->Left);
+    printf("%c ", T->Element);
+    PrintTree(T->Right);
 }
 
 int main(int argc, char const *argv[])
 {
-	
-	return 0;
+    AvlTree T = NULL;
+    T = Insert('a', T);
+    T = Insert('b', T);
+    T = Insert('c', T);
+    T = Insert('z', T);
+    PrintTree(T);
+    return 0;
 }
