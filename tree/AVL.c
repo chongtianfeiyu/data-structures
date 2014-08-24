@@ -3,7 +3,7 @@
 
 #ifndef _AVL_TREE_H
 
-struct AvlNode;
+// struct AvlNode;
 typedef struct AvlNode * Position;
 typedef struct AvlNode * AvlTree;
 
@@ -149,6 +149,14 @@ void PrintTree(AvlTree T) {
     PrintTree(T->Right);
 }
 
+void PrintPreTree(AvlTree T) {
+    if (T == NULL)
+        return ;
+    printf("%c ", T->Element);
+    PrintPreTree(T->Left);
+    PrintPreTree(T->Right);
+}
+
 int main(int argc, char const *argv[])
 {
     AvlTree T = NULL;
@@ -156,6 +164,7 @@ int main(int argc, char const *argv[])
     T = Insert('b', T);
     T = Insert('c', T);
     T = Insert('z', T);
+    PrintPreTree(T);
     PrintTree(T);
     return 0;
 }
