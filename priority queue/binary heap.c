@@ -14,7 +14,7 @@ typedef struct HeapStruct
 typedef struct HeapStruct * PriorityQueue;
 
 PriorityQueue Initialize(int MaxElements);
-void Inset(char c, PriorityQueue H);
+void Insert(char c, PriorityQueue H);
 char DeleteMin(PriorityQueue H);
 char FindMin(PriorityQueue H);
 bool IsEmpty(PriorityQueue H);
@@ -45,7 +45,11 @@ bool IsFull(PriorityQueue H) {
     return H->Capacity >= H->Size ? false : true;
 }
 
-void Inset(char c, PriorityQueue H) {
+bool IsEmpyt(PriorityQueue H) {
+    return H->Size ? true : false;
+}
+
+void Insert(char c, PriorityQueue H) {
     if (IsFull(H)) {
 	printf("Full\n");
 	return ;
@@ -63,30 +67,38 @@ char DeleteMin(PriorityQueue H) {
     }
 
     char result = H->Elements[1];
-    
-    int maxPosition = FindMax(PriorityQueue H);
-    int i = 0;
-    int i = H->Size;
-    if (i == 1) {
-	H->Size--;
-	return result;
+    //长度已经减一！
+    char lastElement = H->Elements[H->Size--];
+    int i, child;
+    for (i = 1; i * 2<= H->Size; i = child) {
+	//child定位较小的值的位置
+	child = i * 2;
+	if (child != H->Size && H->Elements[child + 1] < H->Elements[child])
+	    child++;
+	
+	//判断最后元素是否插入
+	if (lastElement > H->Elements[child])
+	    H->Elements[i] = H->Elements[child];
+	else
+	    break;
     }
-    else if (i & 1) {
-        while (i > 1) {
-	    char temp = H->Elements[i / 2];
-	    H->Elements[i / 2] = H->Elements[i] > H->Elements[i - 1] ? H->Elements[i - 1] : H->Elements[i];
-	    i /= 2;
-        }
-    }
-    else {
-	while (i > 1) {
-            char temp = H->Elements[i / 2];
-	    H->Elements[i / 2] = H->Elements[i] > H->Elements[i - 1] ? H->Elements[i - 1] : H->Elements[i];
-	    i /= 2;
-	}
-    }
-
+    H->Elements[i] = lastElement;
     return result;
 }
 
+void PrintPriorityQueue(PriorityQueue H) {
+    for (int i = 1; i < H->Size; i++)
+	printf("%c ", H->Elements[i]);
+}
 
+int main(int argv, const char *argc[]) {
+    PriorityQueue H = NULL;
+    H = Initialize(100);
+
+    Insert('a', H);
+    Insert('b', H);
+    Insert('c', H);
+
+    PrintPriorityQueue(H);
+    return 0;
+}
