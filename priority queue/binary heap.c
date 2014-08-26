@@ -1,3 +1,9 @@
+﻿/*
+    优先队列（堆）使用二叉堆实现。
+    二叉堆，又名完全二叉树，元素依次从左往右，从上往下填入。
+    根据其结构性，可用数组实现。
+    堆排序会用到。
+*/
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -24,6 +30,7 @@ bool IsFull(PriorityQueue H);
 
 #endif
 
+//初始化二叉堆
 PriorityQueue Initialize(int MaxElements) {
     PriorityQueue H = (PriorityQueue) malloc(sizeof(struct HeapStruct));
     if (H == NULL) {
@@ -39,8 +46,9 @@ PriorityQueue Initialize(int MaxElements) {
 
     H->Capacity = MaxElements;
     H->Size = 0;
-    // "1 << (sizeof(ElementType) * 8)" , gcc �� warning : left shift count >= width of type 
-    // ��� : http://blog.chinaunix.net/uid-23629988-id-127318.html
+    // "1 << (sizeof(ElementType) * 8)" , gcc 给 warning : left shift count >= width of type 
+    // 问题详解 : http://blog.chinaunix.net/uid-23629988-id-127318.html
+    // 作用：得出最小值，放在Elements[0]处，用于停止比较
     H->Elements[0] = 1 << (sizeof(ElementType) * 8 - 1);
     return H;
 }
@@ -71,16 +79,16 @@ ElementType DeleteMin(PriorityQueue H) {
     }
 
     ElementType result = H->Elements[1];
-    //�����Ѿ���һ��
+    //长度已经减一！
     ElementType lastElement = H->Elements[H->Size--];
     int i, child;
     for (i = 1; i * 2<= H->Size; i = child) {
-	//child��λ��С��ֵ��λ��
+	//child定位较小的值的位置
 	child = i * 2;
 	if (child != H->Size && H->Elements[child + 1] < H->Elements[child])
 	    child++;
 	
-	//�ж����Ԫ���Ƿ����
+	//判断最后元素是否插入
 	if (lastElement > H->Elements[child])
 	    H->Elements[i] = H->Elements[child];
 	else
@@ -90,17 +98,49 @@ ElementType DeleteMin(PriorityQueue H) {
     return result;
 }
 
+void Swap(ElementType * a, ElementType * b) {
+    ElementType t = *a;
+    *a = *b;
+    *b = t;
+}
+
+//将普通二叉树变为二叉堆
+void BuildHeap(PriorityQueue H) {
+    int i = H->Size;
+    if (!(i & 1)) {
+        if (H->Elements[i] > H->Elements[i/2])
+	    Swap(&(H->Elements[i]), &(H->Elements[i/2]));
+        --H->Size;
+    }
+    for (i = H->Size / 2; i >= 1; i--) {
+	if (H->Elements[i/2] < H->Elements[i/2+1] && H->Elements[i/2] < H->Elements[i])
+	    Swap(&(H->Elements[i/2]), &(H->Elements[i]));
+	else if (H->Elements[i/2+1] < H->Elements[i/2] && H->Elements[i/2+1] < H->Elements[i])
+	    Swap(&(H->Elements[i/2+1]), &(H->Elements[i]));
+	
+    }
+}
+
 void PrintPriorityQueue(PriorityQueue H) {
     int i;
     for (i = 1; i <= H->Size; i++)
-	printf("%c ", H->Elements[i]);
+	printf("%d ", H->Elements[i]);
     printf("\n");
 }
 
 int main(int argv, const ElementType *argc[]) {
     PriorityQueue H = NULL;
     H = Initialize(100);
-    printf("%d\n", H->Elements[0]);
+    int i = 1;
+    while (i < 15)
+    	//Elements[i++] = 100 - i : 结果为[1, 2, 3 ...] = 99, 98, 97 ...
+	//Elements[i] = 100 - i++ : 同上
+	//Elements[++i] = 100 - i : [1, 2, 3 ...] = 0, 98, 97 ...
+	//Elements[i] = 100 - ++i : [1, 2, 3 ...] = 98, 97, 96 ...
+        H->Elements[i++] = 100 - i;
+
+    PrintPriorityQueue(H);
+    BuildHeap(H);
 
     ElementType c = 0;
     while ((c = getchar()) && c != '\n') {
@@ -110,5 +150,6 @@ int main(int argv, const ElementType *argc[]) {
     }
     
     PrintPriorityQueue(H);
+
     return 0;
 }
