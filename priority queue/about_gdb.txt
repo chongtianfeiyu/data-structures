@@ -1,0 +1,6 @@
+使用gdb调试binary heap时，出现 "error in re-setting breakpoint XXX"，大概系话断点的位置出现错误
+有个解决方法：br main
+在 main 函数处断点
+
+详细原因睇：
+http://stackoverflow.com/questions/912808/after-setting-a-breakpoint-in-qt-gdb-says-error-accessing-memory-address/912870
