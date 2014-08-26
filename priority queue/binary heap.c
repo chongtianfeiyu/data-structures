@@ -1,22 +1,24 @@
 #include <stdio.h>
 #include <math.h>
-
+#include <stdlib.h>
 
 #ifndef _BinHeap_H
+#define bool int
+#define ElementType int
 
 typedef struct HeapStruct
 {
    int Capacity;
    int Size;
-   char * Elements;
+   ElementType * Elements;
 }HeapStruct;
 
 typedef struct HeapStruct * PriorityQueue;
 
 PriorityQueue Initialize(int MaxElements);
-void Insert(char c, PriorityQueue H);
-char DeleteMin(PriorityQueue H);
-char FindMin(PriorityQueue H);
+void Insert(ElementType c, PriorityQueue H);
+ElementType DeleteMin(PriorityQueue H);
+ElementType FindMin(PriorityQueue H);
 bool IsEmpty(PriorityQueue H);
 bool IsFull(PriorityQueue H);
 
@@ -29,7 +31,7 @@ PriorityQueue Initialize(int MaxElements) {
 	return H;
     }
     
-    H->Elements = (char *) malloc(sizeof(MaxElements + 1));
+    H->Elements = (ElementType *) malloc(sizeof(MaxElements + 1));
     if (H->Elements == NULL) {
 	printf("out of space!");
 	return H;
@@ -37,19 +39,21 @@ PriorityQueue Initialize(int MaxElements) {
 
     H->Capacity = MaxElements;
     H->Size = 0;
-    H->Elements[0] = (~0) * -1;
+    // "1 << (sizeof(ElementType) * 8)" , gcc 给 warning : left shift count >= width of type 
+    // 详解 : http://blog.chinaunix.net/uid-23629988-id-127318.html
+    H->Elements[0] = 1 << (sizeof(ElementType) * 8 - 1);
     return H;
 }
 
 bool IsFull(PriorityQueue H) {
-    return H->Capacity >= H->Size ? false : true;
+    return H->Capacity >= H->Size ? 0 : 1;
 }
 
 bool IsEmpyt(PriorityQueue H) {
-    return H->Size ? true : false;
+    return H->Size ? 1 : 0;
 }
 
-void Insert(char c, PriorityQueue H) {
+void Insert(ElementType c, PriorityQueue H) {
     if (IsFull(H)) {
 	printf("Full\n");
 	return ;
@@ -60,15 +64,15 @@ void Insert(char c, PriorityQueue H) {
     H->Elements[i] = c;
 }
 
-char DeleteMin(PriorityQueue H) {
+ElementType DeleteMin(PriorityQueue H) {
     if (H == NULL) {
         printf("PriorityQueue is NULL");
-        return '';
+        return 0;
     }
 
-    char result = H->Elements[1];
+    ElementType result = H->Elements[1];
     //长度已经减一！
-    char lastElement = H->Elements[H->Size--];
+    ElementType lastElement = H->Elements[H->Size--];
     int i, child;
     for (i = 1; i * 2<= H->Size; i = child) {
 	//child定位较小的值的位置
@@ -87,18 +91,24 @@ char DeleteMin(PriorityQueue H) {
 }
 
 void PrintPriorityQueue(PriorityQueue H) {
-    for (int i = 1; i < H->Size; i++)
+    int i;
+    for (i = 1; i <= H->Size; i++)
 	printf("%c ", H->Elements[i]);
+    printf("\n");
 }
 
-int main(int argv, const char *argc[]) {
+int main(int argv, const ElementType *argc[]) {
     PriorityQueue H = NULL;
     H = Initialize(100);
+    printf("%d\n", H->Elements[0]);
 
-    Insert('a', H);
-    Insert('b', H);
-    Insert('c', H);
-
+    ElementType c = 0;
+    while ((c = getchar()) && c != '\n') {
+	if (c != ' ') {
+	    Insert(c, H);
+	}
+    }
+    
     PrintPriorityQueue(H);
     return 0;
 }
