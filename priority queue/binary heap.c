@@ -138,6 +138,7 @@ int main(int argv, const ElementType *argc[]) {
 	//Elements[++i] = 100 - i : [1, 2, 3 ...] = 0, 98, 97 ...
 	//Elements[i] = 100 - ++i : [1, 2, 3 ...] = 98, 97, 96 ...
         H->Elements[i++] = 100 - i;
+    H->Size = 14;
 
     PrintPriorityQueue(H);
     BuildHeap(H);
