@@ -155,8 +155,10 @@ int main(int argv, const ElementType *argc[]) {
 	    Insert(c, H);
 	}
     }
-    getchar();
     PrintPriorityQueue(H);
-
+    i = 1;
+    while (i < 15)
+        printf("%d : %d\n", i++, DeleteMin(H));
+    PrintPriorityQueue(H);
     return 0;
 }
