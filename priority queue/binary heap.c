@@ -1,4 +1,4 @@
-﻿/*
+/*
     优先队列（堆）使用二叉堆实现。
     二叉堆，又名完全二叉树，元素依次从左往右，从上往下填入。
     根据其结构性，可用数组实现。
@@ -107,17 +107,22 @@ void Swap(ElementType * a, ElementType * b) {
 //将普通二叉树变为二叉堆
 void BuildHeap(PriorityQueue H) {
     int i = H->Size;
-    if (!(i & 1)) {
-        if (H->Elements[i] > H->Elements[i/2])
-	    Swap(&(H->Elements[i]), &(H->Elements[i/2]));
-        --H->Size;
-    }
-    for (i = H->Size / 2; i >= 1; i--) {
-	if (H->Elements[i/2] < H->Elements[i/2+1] && H->Elements[i/2] < H->Elements[i])
-	    Swap(&(H->Elements[i/2]), &(H->Elements[i]));
-	else if (H->Elements[i/2+1] < H->Elements[i/2] && H->Elements[i/2+1] < H->Elements[i])
-	    Swap(&(H->Elements[i/2+1]), &(H->Elements[i]));
-	
+    for (i /= 2; i >= 1; i--) {
+    	int father, child;
+	ElementType f = H->Elements[i];
+
+	for (father = i; father * 2 <= H->Size; father = child) {
+	    child = father * 2;
+	    //确定左儿子较小还是右儿子较小
+	    if (child != H->Size && H->Elements[child + 1] < H->Elements[child] )
+	        child++;
+	    //
+	    if (f > H->Elements[child])
+	        H->Elements[father] = H->Elements[child];
+	    else
+	        break;
+	}
+	H->Elements[father] = f;
     }
 }
 
@@ -139,9 +144,10 @@ int main(int argv, const ElementType *argc[]) {
 	//Elements[i] = 100 - ++i : [1, 2, 3 ...] = 98, 97, 96 ...
         H->Elements[i++] = 100 - i;
     H->Size = 14;
-
     PrintPriorityQueue(H);
+
     BuildHeap(H);
+    PrintPriorityQueue(H);
 
     ElementType c = 0;
     while ((c = getchar()) && c != '\n') {
@@ -149,7 +155,7 @@ int main(int argv, const ElementType *argc[]) {
 	    Insert(c, H);
 	}
     }
-    
+    getchar();
     PrintPriorityQueue(H);
 
     return 0;
