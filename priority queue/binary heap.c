@@ -49,7 +49,7 @@ PriorityQueue Initialize(int MaxElements) {
     // "1 << (sizeof(ElementType) * 8)" , gcc 给 warning : left shift count >= width of type 
     // 问题详解 : http://blog.chinaunix.net/uid-23629988-id-127318.html
     // 作用：得出最小值，放在Elements[0]处，用于停止比较
-    H->Elements[0] = 1 << (sizeof(ElementType) * 8 - 1);
+    H->Elements[0] = 1 << (sizeof(int) * 8 - 1);
     return H;
 }
 
