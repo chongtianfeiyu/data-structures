@@ -1,3 +1,6 @@
+/*
+   å¿«é€Ÿæ’åº
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +15,7 @@ void Swap(ElementType *a, ElementType *b)
 
 void QuickSort(ElementType A[], int left, int right)
 {
+    //å¯ä»¥åœ¨æ•°ç»„è¾ƒå°çš„æ—¶å€™ä½¿ç”¨æ’å…¥æ’åºæ¥å‡å°‘è¿è¡Œæ—¶é—´ã€‚
     if (left >= right)
         return ;
     int i, j, center;
@@ -22,12 +26,12 @@ void QuickSort(ElementType A[], int left, int right)
     i = left;
     j = right - 1;
 
-    //¡¶Êı¾İ½á¹¹ÓëËã·¨·ÖÎö¡·ÀïµÄÀı³ÌÊ¹ÓÃÒ»¸öº¯ÊıÀ´Ñ¡È¡pivotÖµ£¬²¢ÁîA[left] < privot < A[right]£¬ÃâÈ¥ " i <= right   j >= left " µÄÅĞ¶Ï¡£
+    //ã€Šæ•°æ®ç»“æ„ä¸ç®—æ³•åˆ†æã€‹é‡Œæœ‰æ›´å¥½åœ°é€‰å–æ¢çº½å…ƒçš„å€¼
     while (1)
     {
-        while (A[i++] < pivot && i <= right)
+        while (A[i++] < pivot && i <= j + 1)
             ;
-        while (A[j--] > pivot && j >= left)
+        while (A[j--] > pivot && j >= i - 1)
             ;
         if (i < j + 2)
             Swap(&A[i - 1], &A[j + 1]);

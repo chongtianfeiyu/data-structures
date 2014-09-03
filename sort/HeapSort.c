@@ -46,6 +46,7 @@ ElementType DeleteMin(PriorityQueue P)
     for (i = 1; i * 2 <= P->Size; i = child)
     {
         child = i * 2;
+        //选出两儿子之中较小的儿子的位置，child记录
         if (child <= P->Size && P->Elements[child] > P->Elements[child + 1])
             child += 1;
 
