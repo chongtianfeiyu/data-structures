@@ -1,5 +1,7 @@
 ﻿/*
  * Dijkstra最短路径算法
+ * 在每个阶段，Dijkstra算法选择一个顶点v, 它在所有未知顶点中具有最小的dist。
+ *
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,7 +97,7 @@ List CopyList(List L)
         Result->Next = Tmp;
         L = L->Next;
     }
-    return L;
+    return Result;
 }
 
 void GraphToTable(Graph G, Table T)
@@ -126,6 +128,7 @@ Table InitTable(Vertex start, Graph G)
         T[i].Path = NotAVertex;
     }
     T[start].Dist = 0;
+    return T;
 }
 
 void PrintList(List L)
@@ -154,7 +157,8 @@ void PrintGraph(Graph G)
 void PrintTable(Table T)
 {
     int i;
-    for (i = 1; i <= sizeof(T); ++i)
+    //sizeof(T) 为顶点总个数+1, 其中+1是有Head指针, 不需要<=。
+    for (i = 1; i < sizeof(T); ++i)
     {
         printf("%d : dist=%d, preVertex=%d\n", i, T[i].Dist, T[i].Path);
     }
@@ -183,6 +187,8 @@ void Dijkstra(Table T)
 
     while (1)
     {
+        //PrintTable(T);
+        //getchar();
         v = GetVertex(T);
         if (v == NotAVertex)
             break;
