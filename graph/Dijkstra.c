@@ -49,6 +49,7 @@ typedef struct Gph
     //暂时编号作名字吧。
 }*Graph;
 
+//从graph.in中输入图的数据
 Graph InitializeGraph()
 {
     FILE *in;
@@ -100,6 +101,7 @@ List CopyList(List L)
     return Result;
 }
 
+//
 void GraphToTable(Graph G, Table T)
 {
     int i;
@@ -107,6 +109,8 @@ void GraphToTable(Graph G, Table T)
     for (i = 1; i <= G->N; ++i)
     {
         L = G->Heads[i]->Next;
+        //可能不需要用到CopyList。直接记录起始位置就好。
+        //这样可能GraphToTable都不需要了。
         T[i].Header = CopyList(L);
     }
 }
@@ -187,8 +191,9 @@ void Dijkstra(Table T)
 
     while (1)
     {
-        //PrintTable(T);
-        //getchar();
+        //得到未被访问的顶点中最小值的顶点
+        //每次都要遍历Table，太花时间。
+        //优化方式：使用优先队列。
         v = GetVertex(T);
         if (v == NotAVertex)
             break;
