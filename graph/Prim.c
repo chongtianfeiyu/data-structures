@@ -190,6 +190,9 @@ Vertex GetVertex(Table T)
     return result;
 }
 
+//同Dijkstra差不多。差别在于更新Dist的不同。
+//Dijkstra： dw = min(dw, dv + c(v,w)) .  dw:点w到起点距离; dv+c(v,w):w经v到起点的距离 .  作用：w到起点的最短距离
+//Prim: dw = min(dw, c(v,w)) . dw:到邻接点的距离;  c(v,w):w到v的距离 .  作用：得到与w邻接的点的最短距离
 void Prim(Table T)
 {
     int v, w;
