@@ -68,3 +68,42 @@ int main(int argc, const char* argv[])
         printf("result : %d\n", IsPrime(N));
     return 0;
 }
+
+/*
+    网上看到的另一种素数制作方式。
+    取一个数组记录哪些是素数，哪些不是。
+    当选到一个奇数时，这个数的倍数都可以判断为非素数。
+
+    若问题是求出某个数以内的素数，这个方法能比较快的求出。
+    若问题是求出某个数是否素数，则上面的方法快得多。
+
+    而且这个方法需要O(n)的空间。
+
+
+
+    还有一种普通的方法，即sqrt(n)内的数除n来求n是否为素数。
+    也需要O(n)的空间。
+*/
+void prime(int n)  
+{  
+    int *pPrime = (int*)malloc(sizeof(int) * (n + 1));
+    int i, j, k;  
+  
+    memset(pPrime, 0, sizeof(int) * (n + 1));
+    pPrime[2] = 1;
+    for ( i = 3; i < n; i += 2)
+        pPrime[ i ] = 0;
+  
+    for ( i = 3, j = sqrt(1.0 * n); i <= j; i += 2 )
+    {
+        if ( pPrime[i] )
+        {
+            k = i * 2;
+            while ( k <= n )
+            {
+                pPrime[k] = 0;
+                k += i;
+            }
+        }
+    }
+}
