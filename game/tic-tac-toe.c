@@ -13,7 +13,6 @@
 typedef int* BoardType;
 
 void FindHumanMove(BoardType Board, int *BestMove, int *Value);
-int time = 0;
 
 BoardType InitalizeBoard()
 {
@@ -42,46 +41,77 @@ int IsEmpty(BoardType B, int i)
 
 int WinOrNot(BoardType B, int type)
 {
-    if (B[1] == type)
+    int i = 1;
+    if (B[1-i] == type)
     {
-        if (B[1] == B[2] && B[1] == B[3])
+        if (B[1-i] == B[2-i] && B[1-i] == B[3-i])
             return 1;
-        else if (B[1] == B[4] && B[1] == B[7])
+        else if (B[1-i] == B[4-i] && B[1-i] == B[7-i])
             return 1;
-        else if (B[1] == B[5] && B[1] == B[9])
+        else if (B[1-i] == B[5-i] && B[1-i] == B[9-i])
             return 1;
     }
-    else if (B[5] == type)
+    else if (B[5-i] == type)
     {
-        if (B[5] == B[2] && B[5] == B[8])
+        if (B[5-i] == B[2-i] && B[5-i] == B[8-i])
             return 1;
-        else if (B[5] == B[4] && B[5] == B[6])
+        else if (B[5-i] == B[4-i] && B[5-i] == B[6-i])
+            return 1;
+        else if (B[5-i] == B[3-i] && B[5-i] == B[7-i])
             return 1;
     }
-    else if (B[9] == type)
+    else if (B[9-i] == type)
     {
-        if (B[9] == B[6] && B[9] == B[3])
+        if (B[9-i] == B[6-i] && B[9-i] == B[3-i])
             return 1;
-        else if (B[9] == B[8] && B[9] == B[7])
+        else if (B[9-i] == B[8-i] && B[9-i] == B[7-i])
             return 1;
     }
     return 0;
 }
 
-int ImmediateCompWin(BoardType B, int *BestMove)
+/*
+   判断是否多行一步就能win。
+   是，则BestMove记录位置并返回win。
+*/
+int ImmediateCompWin(BoardType B, int * const BestMove)
 {
-    Place(B, *BestMove, Comp);
-    int win = WinOrNot(B, Comp);
-    Unplace(B, *BestMove);
-    return win;
+    int i = 1, flag;
+    for ( ; i <= 9; ++i)
+    {
+        if (IsEmpty(B, i))
+        {
+            Place(B, i, Comp);
+            flag = WinOrNot(B, Comp);
+            Unplace(B, i);
+            if (flag)
+            {
+                *BestMove = i;
+                return flag;
+            }
+        }
+    }
+    return flag;
 }
 
-int ImmediateHumanWin(BoardType B, int *BestMove)
+int ImmediateHumanWin(BoardType B, int * const BestMove)
 {
-    Place(B, *BestMove, Human);
-    int win = WinOrNot(B, Human);
-    Unplace(B, *BestMove);
-    return win;
+    int i = 1, flag;
+    for ( ; i <= 9; ++i)
+    {
+        if (IsEmpty(B, i))
+        {
+            Place(B, i, Human);
+            flag = WinOrNot(B, Human);
+            Unplace(B, i);
+            if (flag)
+            {
+                *BestMove = i;
+                return flag;
+            }
+        }
+    }
+    return flag;
 }
 
 int FullBoard(BoardType B)
@@ -90,42 +120,44 @@ int FullBoard(BoardType B)
     for (i = 0; i < 9; ++i)
         if (B[i] == 0)
             return 0;
-    printf("%d\n", ++time);
     return 1;
 }
 
 void FindCompMove(BoardType Board, int *BestMove, int *Value)
 {
-     int Dc, i, Response;
+    int Dc, i, Response;
+    Dc = Response = 0;
 
-     if (FullBoard(Board))
-         *Value = Draw;
-     else if (ImmediateCompWin(Board, BestMove))
-         *Value = CompWin;
-     else
-     {
-         *Value = CompLoss;
-         for (i = 1; i <= 9; i++)
-         {
-             if (IsEmpty(Board, i))
-             {
-                 Place(Board, i, Comp);
-                 FindHumanMove(Board, &Dc, &Response);
-                 Unplace(Board, i);
+    if (FullBoard(Board))
+        *Value = Draw;
+    else if (ImmediateCompWin(Board, BestMove))
+        *Value = CompWin;
+    else
+    {
+        *Value = CompLoss;
+        for (i = 1; i <= 9; i++)
+        {
+            if (IsEmpty(Board, i))
+            {
+                Place(Board, i, Comp);
+                FindHumanMove(Board, &Dc, &Response);
+                Unplace(Board, i);
 
-                 if (Response > *Value)
-                 {
-                     *Value = Response;
-                     *BestMove = i;
-                 }
-             }
-         }
-     }
+                if (Response > *Value)
+                {
+                    *Value = Response;
+                    *BestMove = i;
+                }
+            }
+        }
+    }
 }
+
 
 void FindHumanMove(BoardType Board, int *BestMove, int *Value)
 {
     int Dc, i, Response;
+    Dc = Response = 0;
                                                       
     if (FullBoard(Board))
         *Value = Draw;
@@ -154,33 +186,51 @@ void FindHumanMove(BoardType Board, int *BestMove, int *Value)
 
 void PrintBoard(BoardType Board)
 {
-    int i, j;
-    for (i = 1; i <= 3; ++i)
+    int i;
+    for (i = 1; i <= 9; ++i)
     {
-        for (j = 1; j <= 3; ++j)
-        {
-            if (Board[j - 1] == 1)
-                printf("o ");
-            else if (Board[j - 1] == 2)
-                printf("x ");
-            else
-                printf("_ ");
-        }
-        printf("\n");
+        if (Board[i - 1] == 1)
+            printf("o ");
+        else if (Board[i - 1] == 2)
+            printf("x ");
+        else
+            printf("_ ");
+        if (!(i % 3))
+            printf("\n");
     }
 }
 
 void GameBegin(BoardType B)
 {
-    int BestMove, Value, HumanMove;
-    //开局放在左上角
-    BestMove = 1;
+    int BestMove, Value, HumanMove, first;
+    printf("Who first? Computer:1 ; You:0\n");
+    scanf("%d", &first);
     Value = 0;
     while (1)
     {
+        if (Value == CompWin)
+        {
+            printf("Computer win!\n");
+            break;
+        }
+        else if (Value == CompLoss)
+        {
+            printf("You win!\n");
+            break;
+        }
+        else if (FullBoard(B))
+        {
+            printf("Draw.\n");
+            break;
+        }
+
+        if (!first)
+            goto here;
         FindCompMove(B, &BestMove, &Value);
         B[BestMove - 1] = Comp;
+here:
         PrintBoard(B);
+        first++;
         while (scanf("%d", &HumanMove) != EOF)
         {
             if (!B[HumanMove - 1])
