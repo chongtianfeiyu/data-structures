@@ -105,24 +105,30 @@ void Swap(ElementType * a, ElementType * b) {
 }
 
 //将普通二叉树变为二叉堆
+/*
+    书本上写的是BuildHeap时把N个关键字输入，每次Insert花费O(1)平均时间以及O(logN)的最坏时间，
+    所以总运行时间是O(N)平均时间，不是O(N*logN)最坏。
+
+    不过我的BuildHeap是已经输入了N个关键字。
+*/
 void BuildHeap(PriorityQueue H) {
     int i = H->Size;
     for (i /= 2; i >= 1; i--) {
-    	int father, child;
-	ElementType f = H->Elements[i];
+        int father, child;
+        ElementType f = H->Elements[i];
 
-	for (father = i; father * 2 <= H->Size; father = child) {
-	    child = father * 2;
-	    //确定左儿子较小还是右儿子较小
-	    if (child != H->Size && H->Elements[child + 1] < H->Elements[child] )
-	        child++;
-	    //
-	    if (f > H->Elements[child])
-	        H->Elements[father] = H->Elements[child];
-	    else
-	        break;
-	}
-	H->Elements[father] = f;
+        for (father = i; father * 2 <= H->Size; father = child) {
+            child = father * 2;
+            //确定左儿子较小还是右儿子较小
+            if (child != H->Size && H->Elements[child + 1] < H->Elements[child] )
+                child++;
+            //
+            if (f > H->Elements[child])
+                H->Elements[father] = H->Elements[child];
+            else
+                break;
+        }
+        H->Elements[father] = f;
     }
 }
 
